@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 
 import streamlit as st
 from hugchat import hugchat
@@ -73,7 +74,10 @@ st.write("## Welcome to the TaleMancer app! Get ready to begin your adventure!")
 def get_response(prompt, choice='', is_first=False):
     with st.spinner('Writing the story'):
         st.session_state['conversation'][chat_id]['prompts'].append(choice)
-        story, choices = utils.generate_response(chatbot, prompt, chat_id, cookies[0], is_first)
+        try:
+            story, choices = utils.generate_response(chatbot, prompt, chat_id, cookies[0], is_first)
+        except JSONDecodeError:
+            st.warning("Internal error. Try to click on your choice one more time.")
         st.session_state['conversation'][chat_id]['responses'].append((story, choices))
     # if add_id_message['status'] != 200 or preserve_context_message['status'] != 200:
     #     st.error(f'{add_id_message["message"]} \n {preserve_context_message["message"]}')
