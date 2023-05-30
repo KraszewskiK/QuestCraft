@@ -24,7 +24,7 @@ def validate_response(response):
         choices = ''
     else:
         choices = choices_match[0].split(';')
-        if len(choices) < 2 or not any(choices):
+        if len(choices) != 3 or not any(choices):
             choices = ''
     return story, choices
 
@@ -66,7 +66,10 @@ def preserve_context(chat_id, cookies):
 def generate_response(chatbot, prompt, chat_id, cookies, first_time=False):
     story_choices = '', ''
     no_of_repetitions = 0
-    new_prompt = ". ".join([prompt, prompts.FORMATTING_REMINDER])
+    new_prompt = ". ".join([
+        prompt if first_time else prompts.get_continuation_prompt(prompt),
+        prompts.FORMATTING_REMINDER
+    ])
     while not all(story_choices):
         response = chatbot.chat(new_prompt)
         if first_time and no_of_repetitions == 0:
@@ -74,9 +77,9 @@ def generate_response(chatbot, prompt, chat_id, cookies, first_time=False):
         preserve_context_message = preserve_context(chat_id, cookies)
         story_choices = validate_response(response)
         no_of_repetitions += 1
-        new_prompt = ". ".join([prompt, prompts.FORMATTING_REMINDER, prompts.FORMATTING_DEFINITION])
-        if no_of_repetitions > 5:
-            return 'Internal error', ''
+        new_prompt = ". ".join([prompts.get_continuation_prompt(prompt), prompts.FORMATTING_REMINDER])
+        if no_of_repetitions > 10:
+            return 'Failed to get continuation of the story :(', ''
     if first_time:
         return story_choices  # , preserve_context_message, add_id_message
     else:

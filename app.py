@@ -70,10 +70,10 @@ st.write("## Welcome to the TaleMancer app! Get ready to begin your adventure!")
 
 
 # get model's response, put prompt and response in session_state
-def get_response(prompt):
+def get_response(prompt, choice='', is_first=False):
     with st.spinner('Writing the story'):
-        st.session_state['conversation'][chat_id]['prompts'].append(prompt)
-        story, choices = utils.generate_response(chatbot, prompt, chat_id, cookies[0])
+        st.session_state['conversation'][chat_id]['prompts'].append(choice)
+        story, choices = utils.generate_response(chatbot, prompt, chat_id, cookies[0], is_first)
         st.session_state['conversation'][chat_id]['responses'].append((story, choices))
     # if add_id_message['status'] != 200 or preserve_context_message['status'] != 200:
     #     st.error(f'{add_id_message["message"]} \n {preserve_context_message["message"]}')
@@ -82,17 +82,30 @@ def get_response(prompt):
 if not st.session_state['conversation'][chat_id]['prompts']:
     start_story = st.button('Start your story')
     if start_story:
-        get_response(prompts.INITIAL_PROMPT)
+        get_response(prompts.INITIAL_PROMPT, is_first=True)
 
 # write the previous responses and prompts
+story_so_far = ''
 for i, response in enumerate(st.session_state['conversation'][chat_id]['responses']):
     st.write(response[0])
+    story_so_far = '\n'.join([story_so_far, response[0], 'Choices:', '; '.join(response[1])])
     # write stories and chosen options until the last response
     if i != len(st.session_state['conversation'][chat_id]['responses']) - 1:
         st.write(st.session_state['conversation'][chat_id]['prompts'][i + 1])
+        story_so_far = '\n'.join(
+            [story_so_far, ' '.join(
+                ['I chose:', st.session_state['conversation'][chat_id]['prompts'][i + 1]])
+             ]
+        )
         st.divider()
     else:  # for the last response create buttons for each choice
-        choices_buttons = [None] * len(response[1])
-        for j, choice in enumerate(response[1]):
-            # after clicking the button create a prompt based on the choice
-            choices_buttons[j] = st.button(choice, on_click=lambda: get_response(choice))
+        choice_button_1 = st.button(response[1][0])
+        choice_button_2 = st.button(response[1][1])
+        choice_button_3 = st.button(response[1][2])
+        # after clicking the button create a prompt based on the choice
+        if choice_button_1:
+            get_response('\n'.join([story_so_far, ' '.join(['I chose:', response[1][0]])]), response[1][0])
+        if choice_button_2:
+            get_response('\n'.join([story_so_far, ' '.join(['I chose:', response[1][1]])]), response[1][1])
+        if choice_button_3:
+            get_response('\n'.join([story_so_far, ' '.join(['I chose:', response[1][2]])]), response[1][2])
