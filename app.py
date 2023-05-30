@@ -54,8 +54,14 @@ with st.sidebar:
             chatbot.change_conversation(st.session_state['chat_id'])
             st.session_state['conversation'][st.session_state['chat_id']] = {'prompts': [], 'responses': []}
 
-    st.title('🎮📚🔮TaleMancer RPG storyteller')
+    st.title('TaleMancer RPG storyteller🎮📚🔮')
     st.markdown('''
+        ## Disclaimer
+        - This is a beta version of the app. You will probably experience some bugs.
+        - Loading times while *Writing the story* are rather long.
+        - After you click one of the options and the next part loads, it is advised to click on the previously chosen \
+        option again. It should make previous buttons disappear.
+        
         ## About
         This is an LLM-powered app built using:
         - [Streamlit](https://streamlit.io/)
