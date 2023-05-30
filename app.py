@@ -1,5 +1,4 @@
 import json
-from json import JSONDecodeError
 
 import streamlit as st
 from hugchat import hugchat
@@ -60,7 +59,8 @@ with st.sidebar:
         This is an LLM-powered app built using:
         - [Streamlit](https://streamlit.io/)
         - [HugChat](https://github.com/Soulter/hugging-chat-api)
-        - [OpenAssistant/oasst-sft-6-llama-30b-xor](https://huggingface.co/OpenAssistant/oasst-sft-6-llama-30b-xor) Large Language Model
+        - [OpenAssistant/oasst-sft-6-llama-30b-xor](https://huggingface.co/OpenAssistant/oasst-sft-6-llama-30b-xor) \
+        Large Language Model
 
         💡 Note: No API key required!
         ''')
